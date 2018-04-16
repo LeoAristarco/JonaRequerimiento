@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class AdapterNumeros extends RecyclerView.Adapter<AdapterNumeros.ViewHolderNumeros> implements View.OnClickListener  {
 
-    ArrayList<String> listaDeNumeros;/**ArrayList<PersonajeVo> listaPersonajes*/
+    ArrayList<String> listaDeNumeros;/** --> ArrayList<PersonajeVo> listaPersonajes */
     private View.OnClickListener listener;
 
     public AdapterNumeros(ArrayList<String> listaDeNumeros) {
