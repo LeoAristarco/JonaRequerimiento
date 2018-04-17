@@ -37,7 +37,7 @@ import java.util.Map;
  * Use the {@link FragmentList#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentList extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener{
+public class FragmentList extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -50,7 +50,7 @@ public class FragmentList extends Fragment implements Response.Listener<JSONObje
     private OnFragmentInteractionListener mListener;
 
     RecyclerView recyclerNumeros;
-    ArrayList<String> listaDeNueros = new ArrayList<String>();
+    ArrayList<NoticiaVO> listaDeNueros = new ArrayList<NoticiaVO>();
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -105,14 +105,14 @@ public class FragmentList extends Fragment implements Response.Listener<JSONObje
         consultarWebService();
 
 
-        AdapterNumeros adapter = new AdapterNumeros(listaDeNueros);
+        adapterNoticia adapter = new adapterNoticia(listaDeNueros);
         recyclerNumeros.setAdapter(adapter);
 
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                interfaceComunicaFragment.enviarNumero(listaDeNueros.get(recyclerNumeros.getChildAdapterPosition(view)));
+                interfaceComunicaFragment.enviarNumero(listaDeNueros.get(recyclerNumeros.getChildAdapterPosition(view)).getDescription());
             }
         });
 
@@ -162,7 +162,7 @@ public class FragmentList extends Fragment implements Response.Listener<JSONObje
                 headers.put("Token", "6a6ed3d0-790a-434d-96d3-6560aa48a533");
                 return headers;
             }
-        };;
+        };
 
         request.add(jsonObjectRequest);
 
@@ -170,25 +170,21 @@ public class FragmentList extends Fragment implements Response.Listener<JSONObje
 
     private void mapearJsonArrayALaLista(JSONArray json) throws JSONException {
         listaDeNueros.clear();
+        NoticiaVO noticia=null;
+
         for(int i=1;i<11;i++){
+
+            noticia = new NoticiaVO();
             JSONObject jsonObject = null;
             jsonObject= json.getJSONObject(i);
-            jsonObject.optString("AvatarUrl");
-            listaDeNueros.add(jsonObject.optString("AvatarUrl"));
+            noticia.setUserName(jsonObject.optString("UserName"));
+            noticia.setAvatarUrl(jsonObject.optString("AvatarUrl"));
+            noticia.setDescription(jsonObject.optString("Description"));
+            listaDeNueros.add(noticia);
         }
     }
 
 
-    @Override
-    public void onResponse(JSONObject response) {
-
-
-    }
-
-    @Override
-    public void onErrorResponse(VolleyError error) {
-
-    }
 
 
     // TODO: Rename method, update argument and hook method into UI event
