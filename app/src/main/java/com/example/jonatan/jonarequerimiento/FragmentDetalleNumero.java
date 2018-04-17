@@ -63,7 +63,6 @@ public class FragmentDetalleNumero extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        Toast.makeText(getContext(),"onCreate",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -74,7 +73,6 @@ public class FragmentDetalleNumero extends Fragment {
 
         textView = (TextView) vista.findViewById(R.id.idNumero);
 
-        Toast.makeText(getContext(),"onCreateView",Toast.LENGTH_SHORT).show();
 
         getPaqueteEnviado();
 
