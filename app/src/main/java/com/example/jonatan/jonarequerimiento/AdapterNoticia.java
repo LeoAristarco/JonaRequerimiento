@@ -13,15 +13,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class adapterNoticia extends RecyclerView.Adapter<adapterNoticia.ViewHolderNoticia> implements View.OnClickListener  {
+public class AdapterNoticia extends RecyclerView.Adapter<AdapterNoticia.ViewHolderNoticia> implements View.OnClickListener  {
 
     ArrayList<NoticiaVO> listaDeNoticias;/** --> ArrayList<PersonajeVo> listaPersonajes */
     private View.OnClickListener listener;
     Context context;
 
-    public adapterNoticia(ArrayList<NoticiaVO> listaDeNoticias) {
+    public AdapterNoticia() {
         this.listaDeNoticias = new ArrayList<>();
-        this.listaDeNoticias.addAll(listaDeNoticias);
     }
 
     @NonNull
@@ -44,11 +43,18 @@ public class adapterNoticia extends RecyclerView.Adapter<adapterNoticia.ViewHold
 
     @Override
     public int getItemCount() {
+
         return listaDeNoticias.size();
     }
 
     public void setOnClickListener(View.OnClickListener listener){
         this.listener=listener;
+    }
+
+    public void setData(ArrayList<NoticiaVO> noticias){
+        this.listaDeNoticias.clear();
+        this.listaDeNoticias.addAll(noticias);
+        notifyDataSetChanged();
     }
 
     @Override

@@ -11,22 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.jonatan.jonarequerimiento.modelo.WebServiceFusap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -37,7 +24,7 @@ import java.util.Map;
  * Use the {@link FragmentList#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentList extends Fragment {
+public class FragmentList extends Fragment implements WebServiceFusap.FragmentCallback {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -46,15 +33,11 @@ public class FragmentList extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private AdapterNoticia adapterNoticias;
     private OnFragmentInteractionListener mListener;
 
     RecyclerView recyclerNumeros;
-    ArrayList<NoticiaVO> listaDeNueros = new ArrayList<NoticiaVO>();
-
-    RequestQueue request;
-    JsonObjectRequest jsonObjectRequest;
-    StringRequest stringRequest;
+    WebServiceFusap webServiceFusap = new WebServiceFusap(this);
 
     Activity activity;
     IComunicaFragments interfaceComunicaFragment;
@@ -100,91 +83,23 @@ public class FragmentList extends Fragment {
 
         recyclerNumeros.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        request= Volley.newRequestQueue(getContext());
+        webServiceFusap.getNoticias(getContext());
 
-        consultarWebService();
+        adapterNoticias = new AdapterNoticia();
+        recyclerNumeros.setAdapter(adapterNoticias);
 
-
-        adapterNoticia adapter = new adapterNoticia(listaDeNueros);
-        recyclerNumeros.setAdapter(adapter);
-
-        adapter.setOnClickListener(new View.OnClickListener() {
+        adapterNoticias.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                interfaceComunicaFragment.enviarNumero(listaDeNueros.get(recyclerNumeros.getChildAdapterPosition(view)).getDescription());
+                interfaceComunicaFragment.enviarNumero(adapterNoticias.listaDeNoticias.get(recyclerNumeros.getChildAdapterPosition(view)).getDescription());
+
             }
         });
-
 
         return vista;
 
     }
-
-
-    private void consultarWebService() {
-
-        String url = "http://runity.fusap.com.ar/api/v1/news?count=10&newsID=0&direction=1";
-
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-/*                        Toast.makeText(getContext(), "JSON:" + response, Toast.LENGTH_SHORT).show();*/
-
-                        try {
-
-                            JSONArray jsonArray = response.optJSONArray("Data");
-
-                            mapearJsonArrayALaLista(jsonArray);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        //Failure Callback
-                    }
-                })
-        {
-
-            /** Passing some request headers* */
-            @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
-                HashMap<String,String> headers = new HashMap();
-                headers.put("AppID", "C1F5687A-785A-43BD-91F2-88436B2FCB15");
-                headers.put("Token", "6a6ed3d0-790a-434d-96d3-6560aa48a533");
-                return headers;
-            }
-        };
-
-        request.add(jsonObjectRequest);
-
-    }
-
-    private void mapearJsonArrayALaLista(JSONArray json) throws JSONException {
-        listaDeNueros.clear();
-        NoticiaVO noticia=null;
-
-        for(int i=1;i<11;i++){
-
-            noticia = new NoticiaVO();
-            JSONObject jsonObject = null;
-            jsonObject= json.getJSONObject(i);
-            noticia.setUserName(jsonObject.optString("UserName"));
-            noticia.setAvatarUrl(jsonObject.optString("AvatarUrl"));
-            noticia.setDescription(jsonObject.optString("Description"));
-            listaDeNueros.add(noticia);
-        }
-    }
-
-
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -217,6 +132,10 @@ public class FragmentList extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onResultsReady(ArrayList<NoticiaVO> noticias) {
+        adapterNoticias.setData(noticias);
+    }
 
 
     /**
