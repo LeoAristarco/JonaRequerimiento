@@ -56,7 +56,7 @@ public class WebServiceFusap {
 
     private void consultarWebService() {
 
-        String url = "http://runity.fusap.com.ar/api/v1/news?count=100&newsID=0&direction=1";
+        String url = "http://runity.fusap.com.ar/api/v1/news?count=5&newsID=0&direction=1";
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -70,6 +70,8 @@ public class WebServiceFusap {
                             mapearJsonArrayALaLista(jsonArray);
 
                             callback.onResultsReady(listaDeNoticias);
+
+                            listaDeNoticias.size();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -104,7 +106,8 @@ public class WebServiceFusap {
     private void mapearJsonArrayALaLista(JSONArray json) throws JSONException {
         NoticiaVO noticia=null;
 
-        for(int i=1;i<json.length();i++){
+
+        for(int i=0;i<json.length();i++){
             noticia = new NoticiaVO();
             JSONObject jsonObject = null;
             jsonObject= json.getJSONObject(i);
